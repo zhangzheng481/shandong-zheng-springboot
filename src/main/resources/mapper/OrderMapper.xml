@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shandong.zheng.springboot.dao.OrderMapper">
+    <!-- 通用字段映射（适配下划线转驼峰） -->
+    <resultMap id="orderResultMap" type="shandong.zheng.springboot.entity.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="amount" property="amount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 动态查询实现 -->
+    <select id="selectList" resultMap="orderResultMap">
+        SELECT
+        id, order_no, user_id, amount, create_time
+        FROM `order`
+        <where>
+            <!-- 精确查询条件 -->
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                AND order_no = #{orderNo}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="amount != null">
+                AND amount = #{amount}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 插入实现（显式处理非空字段） -->
+    <insert id="insert" parameterType="shandong.zheng.springboot.entity.Order"
+            useGeneratedKeys="false" keyProperty="id">
+        INSERT INTO `order` (
+        id,
+        order_no,
+        user_id,
+        amount
+        <if test="createTime != null">
+            , create_time
+        </if>
+        ) VALUES (
+        #{id},
+        #{orderNo},
+        #{userId},
+        #{amount}
+        <if test="createTime != null">
+            , #{createTime}
+        </if>
+        )
+    </insert>
+
+</mapper>
